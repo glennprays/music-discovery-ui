@@ -9,7 +9,7 @@ const fontFamily = Poppins({
 });
 
 export const metadata: Metadata = {
-    title: "Music Discovery | findme.",
+    title: "Music Discovery | dengerin.",
     description: "Application to discover music by hearing it!",
 };
 

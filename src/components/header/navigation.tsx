@@ -10,7 +10,7 @@ export function Navigation() {
                     width={25}
                     height={25}
                 />
-                findme.
+                dengerin.
             </div>
         </nav>
     );

@@ -9,10 +9,9 @@ export function ShowMusic({ audioBlob }: { audioBlob: Blob | undefined }) {
         if (audioBlob) {
             try {
                 console.log("Recording audio...");
-                // const recordedAudioBlob = await recordAudioAsWav(audioBlob);
 
                 const formData = new FormData();
-                formData.append("audio", audioBlob, "audio.wav");
+                formData.append("audio", audioBlob, `audio.${audioBlob.type.split("/")[1]}`);
 
                 const response = await fetch("/api/music/search", {
                     method: "POST",
@@ -36,7 +35,7 @@ export function ShowMusic({ audioBlob }: { audioBlob: Blob | undefined }) {
         if (audioBlob) {
             // Create a URL for the Blob
             const audioUrl = URL.createObjectURL(audioBlob);
-            setUrl(audioUrl)
+            setUrl(audioUrl);
 
             // Play the audio
             if (audioRef.current) {

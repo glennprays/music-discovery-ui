@@ -10,32 +10,26 @@ export function FindMusic({
 }) {
     const [finding, setFinding] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-    const chunksRef = useRef<Blob[]>([]);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     function startHearing() {
         if (!finding) {
-            console.log("record start");
-    
+            console.log("recording start");
             navigator.mediaDevices
                 .getUserMedia({ audio: true })
                 .then((stream) => {
                     const mediaRecorder = new MediaRecorder(stream, {
                         audioBitsPerSecond: 256000, // Set the desired bitrate (256 kbps in this example)
                     });
-    
-                    mediaRecorder.ondataavailable = (event) => {
-                        if (event.data.size > 0) {
-                            chunksRef.current.push(event.data);
-                        }
-                    };
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(chunksRef.current);
-                        setAudioBlob(audioBlob);
-                    };
-    
+
                     mediaRecorder.start();
                     setFinding(true);
                     mediaRecorderRef.current = mediaRecorder;
+
+                    timeoutRef.current = setTimeout(() => {
+                        console.log("stopped");
+                        stopHearing();
+                    }, 15000);
                 })
                 .catch((error) => {
                     console.error("Error accessing microphone:", error);
@@ -49,20 +43,37 @@ export function FindMusic({
         }
         setAudioBlob(undefined);
         setFinding(false);
+
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
     }
 
     function stopHearing() {
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop();
-            setFinding(false);
+            mediaRecorderRef.current.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    const audioBlob = new Blob([event.data], {
+                        type: event.data.type,
+                    });
+                    setAudioBlob(audioBlob);
+                    setFinding(false);
+                }
+            };
+        } else {
+            console.error("Media Recorder Error!");
         }
     }
 
     useEffect(() => {
         return () => {
-            // Clean up and stop recording when component unmounts
             if (mediaRecorderRef.current) {
                 mediaRecorderRef.current.stop();
+            }
+
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
             }
         };
     }, []);
@@ -85,11 +96,9 @@ export function FindMusic({
                     <div className="bg-[#84e2ff] rounded-full absolute w-[120px] h-[120px] motion-safe:animate-ping"></div>
                 )}
                 <div
-                    onClick={finding ? stopHearing : startHearing}
-                    className={
-                        "bg-[#0088FF] p-14 rounded-full flex items-center justify-center w-fit relative " +
-                        (finding ? "" : "hover:scale-105 transition-transform")
-                    }
+                    onClick={finding ? cancelHearing : startHearing}
+                    className={`bg-[#0088FF] p-14 rounded-full flex items-center justify-center w-fit relative 
+            ${finding ? "" : "hover:scale-105 transition-transform"}`}
                 >
                     {finding ? (
                         <span className="text-[70px] text-white">
@@ -97,7 +106,7 @@ export function FindMusic({
                         </span>
                     ) : (
                         <Image
-                            src="findme-logo-white.svg"
+                            src="/findme-logo-white.svg"
                             alt="find"
                             width={70}
                             height={70}
