@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { BsMic } from "react-icons/bs";
@@ -18,9 +19,7 @@ export function FindMusic({
             navigator.mediaDevices
                 .getUserMedia({ audio: true })
                 .then((stream) => {
-                    const mediaRecorder = new MediaRecorder(stream, {
-                        audioBitsPerSecond: 256000, // Set the desired bitrate (256 kbps in this example)
-                    });
+                    const mediaRecorder = new MediaRecorder(stream);
 
                     mediaRecorder.start();
                     setFinding(true);
@@ -29,7 +28,7 @@ export function FindMusic({
                     timeoutRef.current = setTimeout(() => {
                         console.log("stopped");
                         stopHearing();
-                    }, 15000);
+                    }, 26000);
                 })
                 .catch((error) => {
                     console.error("Error accessing microphone:", error);
