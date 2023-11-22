@@ -12,6 +12,7 @@ export function FindMusic({
     const [finding, setFinding] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const findingTime = 10 
 
     function startHearing() {
         if (!finding) {
@@ -28,7 +29,7 @@ export function FindMusic({
                     timeoutRef.current = setTimeout(() => {
                         console.log("stopped");
                         stopHearing();
-                    }, 26000);
+                    }, (findingTime+1)*1000);
                 })
                 .catch((error) => {
                     console.error("Error accessing microphone:", error);
