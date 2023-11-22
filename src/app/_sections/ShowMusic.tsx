@@ -74,7 +74,7 @@ export function ShowMusic({ audioBlob }: { audioBlob: Blob | undefined }) {
                 });
 
                 if (response.ok) {
-                    const data : MusicData = await response.json();
+                    const data: MusicData = await response.json();
                     setApiResponse(data);
                 } else {
                     throw new Error("Error uploading audio");
@@ -109,25 +109,18 @@ export function ShowMusic({ audioBlob }: { audioBlob: Blob | undefined }) {
                 <div className="flex flex-col gap-3">
                     {apiResponse ? (
                         <>
-                            <Image
-                                src={apiResponse.search_result.thumbnails[1].url.toString()}
-                                width={
-                                    apiResponse.search_result.thumbnails[1]
-                                        .width
-                                }
-                                height={
-                                    apiResponse.search_result.thumbnails[1]
-                                        .height
-                                }
-                                alt="song"
-                            />
+                            <span className="">
+                                Detected lyrics:{" "}
+                                <span className="italic">{apiResponse.lyrics}</span>
+                            </span>
                             <div>
                                 <Link
                                     href={`https://music.youtube.com/watch?v=${apiResponse.search_result.videoId}`}
-                                    className="text-3xl"
+                                    className="text-3xl text-sky-600"
                                 >
                                     {apiResponse.search_result.title}
-                                </Link> -
+                                </Link>{" "}
+                                -
                                 <span>
                                     {apiResponse.search_result.artists[0].name}
                                 </span>
